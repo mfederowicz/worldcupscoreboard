@@ -1,7 +1,10 @@
-.PHONY: board tests
+.PHONY: build board tests
 
-board:
-	go run ./cmd/board
+build:
+	go build -o bin/board ./cmd/board
+
+board: build
+	./bin/board
 
 tests:
 	go test -v -race ./...

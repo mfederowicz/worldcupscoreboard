@@ -1,3 +1,4 @@
 docs/*.pdf
 php/vendor/
 php/.phpunit.cache/
+golang/bin/
