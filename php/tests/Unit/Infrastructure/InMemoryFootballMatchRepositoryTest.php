@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard\Tests\Unit;
+namespace WorldCupScoreBoard\Tests\Unit\Infrastructure;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use WorldCupScoreBoard\FootballMatch;
-use WorldCupScoreBoard\InMemoryFootballMatchRepository;
+use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 
 #[CoversClass(InMemoryFootballMatchRepository::class)]
 #[UsesClass(FootballMatch::class)]

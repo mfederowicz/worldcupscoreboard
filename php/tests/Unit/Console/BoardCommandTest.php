@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard\Tests\Unit\Command;
+namespace WorldCupScoreBoard\Tests\Unit\Console;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use WorldCupScoreBoard\Board;
-use WorldCupScoreBoard\Command\BoardCommand;
-use WorldCupScoreBoard\FootballMatch;
-use WorldCupScoreBoard\InMemoryFootballMatchRepository;
+use WorldCupScoreBoard\Console\BoardCommand;
+use WorldCupScoreBoard\Domain\Board;
+use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 
 #[CoversClass(BoardCommand::class)]
 #[UsesClass(Board::class)]

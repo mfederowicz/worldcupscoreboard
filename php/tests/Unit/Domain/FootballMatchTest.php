@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard\Tests\Unit;
+namespace WorldCupScoreBoard\Tests\Unit\Domain;
 
 use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use WorldCupScoreBoard\FootballMatch;
+use WorldCupScoreBoard\Domain\FootballMatch;
 
 #[CoversClass(FootballMatch::class)]
 final class FootballMatchTest extends TestCase

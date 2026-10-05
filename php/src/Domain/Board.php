@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard;
+namespace WorldCupScoreBoard\Domain;
 
 use InvalidArgumentException;
 
@@ -14,7 +14,7 @@ final class Board implements ScoreBoard
     private array $finishedMatches = [];
 
     public function __construct(
-        private readonly FootballMatchRepository $matches = new InMemoryFootballMatchRepository(),
+        private readonly FootballMatchRepository $matches,
     ) {
     }
 

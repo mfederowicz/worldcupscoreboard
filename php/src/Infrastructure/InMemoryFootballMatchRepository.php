@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard;
+namespace WorldCupScoreBoard\Infrastructure;
+
+use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Domain\FootballMatchRepository;
 
 final class InMemoryFootballMatchRepository implements FootballMatchRepository
 {

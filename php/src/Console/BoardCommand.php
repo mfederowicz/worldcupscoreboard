@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard\Command;
+namespace WorldCupScoreBoard\Console;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use WorldCupScoreBoard\Board;
-use WorldCupScoreBoard\FootballMatch;
+use WorldCupScoreBoard\Domain\Board;
+use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 
 #[AsCommand(name: 'board', description: 'Plays example matches and shows the score board summary')]
 final class BoardCommand extends Command
@@ -34,7 +35,7 @@ final class BoardCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $board = new Board();
+        $board = new Board(new InMemoryFootballMatchRepository());
         $matches = [];
 
         $output->writeln(['World Cup finals begin:', '']);

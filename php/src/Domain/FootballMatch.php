@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WorldCupScoreBoard;
+namespace WorldCupScoreBoard\Domain;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
