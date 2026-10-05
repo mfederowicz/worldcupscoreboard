@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Symfony\Component\Console\Application;
+use WorldCupScoreBoard\Command\BoardCommand;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$application = new Application('World Cup Score Board');
+$application->addCommand(new BoardCommand());
+$application->run();
