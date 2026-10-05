@@ -14,4 +14,9 @@ const (
 	// ErrInvalidFootballMatchState means the action does not fit the state of
 	// the match, for example a score update after the match was finished.
 	ErrInvalidFootballMatchState ScoreBoardError = "invalid football match state"
+	// ErrFootballMatchNotFound means the match is not on the board: it was
+	// never started there, or it is already finished.
+	ErrFootballMatchNotFound ScoreBoardError = "football match not found"
+	// ErrTeamAlreadyPlaying means one of the teams is in a match on the board.
+	ErrTeamAlreadyPlaying ScoreBoardError = "team is already playing"
 )
