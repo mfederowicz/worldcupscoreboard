@@ -12,12 +12,14 @@ use PHPUnit\Framework\TestCase;
 use WorldCupScoreBoard\Domain\Board;
 use WorldCupScoreBoard\Domain\FootballMatch;
 use WorldCupScoreBoard\Domain\FootballMatchNotFoundException;
+use WorldCupScoreBoard\Domain\TeamAlreadyPlayingException;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 
 #[CoversClass(Board::class)]
 #[UsesClass(FootballMatch::class)]
 #[UsesClass(FootballMatchNotFoundException::class)]
 #[UsesClass(InMemoryFootballMatchRepository::class)]
+#[UsesClass(TeamAlreadyPlayingException::class)]
 final class BoardTest extends TestCase
 {
     private const array EXAMPLE = [
@@ -77,7 +79,7 @@ final class BoardTest extends TestCase
         try {
             $board->startGame($rejected);
             self::fail('Expected the match to be rejected.');
-        } catch (InvalidArgumentException) {
+        } catch (TeamAlreadyPlayingException) {
             self::assertNull($rejected->startMatchTime);
             self::assertSame([$live], $board->summary());
         }

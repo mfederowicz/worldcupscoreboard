@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace WorldCupScoreBoard\Domain;
 
-use InvalidArgumentException;
-
 final class Board implements ScoreBoard
 {
     /**
@@ -22,7 +20,7 @@ final class Board implements ScoreBoard
     {
         foreach ([$match->homeTeam, $match->awayTeam] as $team) {
             if ($this->isPlaying($team)) {
-                throw new InvalidArgumentException(sprintf('Team "%s" is already playing.', $team));
+                throw new TeamAlreadyPlayingException(sprintf('Team "%s" is already playing.', $team));
             }
         }
 
