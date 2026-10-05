@@ -11,7 +11,7 @@ The same idea is written in two languages, each in its own folder:
 | Folder | Language | Status |
 |---|---|---|
 | [`php/`](php/) | PHP 8.4 | done |
-| [`golang/`](golang/) | Go | not started yet |
+| [`golang/`](golang/) | Go 1.26 | done |
 
 Each folder is a separate project with its own README, tests and Makefile.
 Both use the same two commands:
@@ -32,3 +32,17 @@ make board
 ```
 
 More details, the list of special cases and the design choices are in [`php/README.md`](php/README.md).
+
+## Quick start (Go)
+
+```
+git clone <repository-url> scoreboard
+cd scoreboard/golang
+make tests
+make board
+```
+
+There is nothing to install first: the Go version uses only the standard library.
+
+More details, and a list of what is different from the PHP version, are in
+[`golang/README.md`](golang/README.md).
