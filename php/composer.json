@@ -10,12 +10,12 @@
     },
     "autoload": {
         "psr-4": {
-            "WorldcupScoreBoard\\": "src/"
+            "WorldCupScoreBoard\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "WorldcupScoreBoard\\Tests\\": "tests/"
+            "WorldCupScoreBoard\\Tests\\": "tests/"
         }
     },
     "authors": [
