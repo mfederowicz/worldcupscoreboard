@@ -9,14 +9,14 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use WorldCupScoreBoard\Console\BoardCommand;
-use WorldCupScoreBoard\Domain\Board;
 use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Domain\ScoreBoard;
 use WorldCupScoreBoard\Domain\Uuid;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 use WorldCupScoreBoard\Infrastructure\UuidGenerator;
 
 #[CoversClass(BoardCommand::class)]
-#[UsesClass(Board::class)]
+#[UsesClass(ScoreBoard::class)]
 #[UsesClass(FootballMatch::class)]
 #[UsesClass(InMemoryFootballMatchRepository::class)]
 #[UsesClass(Uuid::class)]

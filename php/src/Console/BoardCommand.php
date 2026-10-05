@@ -8,8 +8,8 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use WorldCupScoreBoard\Domain\Board;
 use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Domain\ScoreBoard;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 use WorldCupScoreBoard\Infrastructure\UuidGenerator;
 
@@ -36,7 +36,7 @@ final class BoardCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $board = new Board(new InMemoryFootballMatchRepository());
+        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $ids = new UuidGenerator();
         $matches = [];
 
