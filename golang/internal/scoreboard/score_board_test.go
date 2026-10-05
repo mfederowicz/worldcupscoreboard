@@ -73,6 +73,7 @@ func TestNewBoardIsEmpty(t *testing.T) {
 	board := newBoard()
 
 	assertMatches(t, board.Summary())
+	assertMatches(t, board.FinishedGames())
 }
 
 func TestStartGameStartsMatchAndPutsItOnBoard(t *testing.T) {
@@ -152,6 +153,7 @@ func TestFinishGameFinishesMatchAndRemovesItFromBoard(t *testing.T) {
 	}
 
 	assertMatches(t, board.Summary())
+	assertMatches(t, board.FinishedGames(), match)
 }
 
 func TestTeamsCanPlayAgainAfterTheirMatchIsFinished(t *testing.T) {
@@ -230,5 +232,36 @@ func TestSummaryIsOrderedByTotalScoreThenMostRecentlyStarted(t *testing.T) {
 
 	if got := describe(board.Summary()); !slices.Equal(got, exampleSummary) {
 		t.Errorf("Summary() = %q, want %q", got, exampleSummary)
+	}
+}
+
+func TestFinishedGamesUseSameOrderRegardlessOfFinishOrder(t *testing.T) {
+	board := newBoard()
+	matches := playExample(t, board)
+
+	for _, index := range []int{2, 0, 4, 1, 3} {
+		if err := board.FinishGame(matches[index]); err != nil {
+			t.Fatalf("FinishGame() error = %v", err)
+		}
+	}
+
+	assertMatches(t, board.Summary())
+
+	if got := describe(board.FinishedGames()); !slices.Equal(got, exampleSummary) {
+		t.Errorf("FinishedGames() = %q, want %q", got, exampleSummary)
+	}
+}
+
+func TestChangingResultOfFinishedGamesDoesNotChangeBoard(t *testing.T) {
+	board := newBoard()
+	matches := playExample(t, board)
+	for _, match := range matches {
+		board.FinishGame(match)
+	}
+
+	slices.Reverse(board.FinishedGames())
+
+	if got := describe(board.FinishedGames()); !slices.Equal(got, exampleSummary) {
+		t.Errorf("FinishedGames() = %q, want %q", got, exampleSummary)
 	}
 }

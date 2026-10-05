@@ -9,9 +9,10 @@ import (
 )
 
 // ScoreBoard starts matches, updates their scores, finishes them and lists
-// the ones in progress.
+// the ones in progress and the finished ones.
 type ScoreBoard struct {
-	matches FootballMatchRepository
+	matches         FootballMatchRepository
+	finishedMatches []*FootballMatch
 }
 
 func NewScoreBoard(matches FootballMatchRepository) *ScoreBoard {
@@ -36,7 +37,8 @@ func (b *ScoreBoard) StartGame(match *FootballMatch) error {
 	return nil
 }
 
-// FinishGame finishes the match and removes it from the board.
+// FinishGame finishes the match, removes it from the board and keeps it in
+// the list of finished games.
 func (b *ScoreBoard) FinishGame(match *FootballMatch) error {
 	if err := b.checkOnBoard(match); err != nil {
 		return err
@@ -47,6 +49,7 @@ func (b *ScoreBoard) FinishGame(match *FootballMatch) error {
 	}
 
 	b.matches.Remove(match.MatchID())
+	b.finishedMatches = append(b.finishedMatches, match)
 
 	return nil
 }
@@ -66,12 +69,18 @@ func (b *ScoreBoard) UpdateScore(match *FootballMatch, homeScore, awayScore int)
 	return nil
 }
 
-// Summary returns the matches in progress. Highest total score first; equal
-// totals: most recently started first.
+// Summary returns the matches in progress, ordered by total score.
 func (b *ScoreBoard) Summary() []*FootballMatch {
 	return byTotalScore(b.matches.All())
 }
 
+// FinishedGames returns the finished matches, ordered by total score.
+func (b *ScoreBoard) FinishedGames() []*FootballMatch {
+	return byTotalScore(slices.Clone(b.finishedMatches))
+}
+
+// byTotalScore sorts the matches: highest total score first; equal totals:
+// most recently started first.
 func byTotalScore(matches []*FootballMatch) []*FootballMatch {
 	slices.SortStableFunc(matches, func(x, y *FootballMatch) int {
 		return cmp.Or(
