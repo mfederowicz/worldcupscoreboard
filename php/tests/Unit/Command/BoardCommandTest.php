@@ -28,20 +28,41 @@ final class BoardCommandTest extends TestCase
     {
         $output = self::runCommand();
 
-        self::assertStringContainsString("Started: Mexico - Canada\nScore:   Mexico 0 - Canada 5\n", $output);
+        self::assertStringStartsWith("World Cup finals begin:\n\nStarted: Mexico - Canada\nScore:   Mexico 0 - Canada 5\n", $output);
         self::assertStringContainsString("Started: Argentina - Australia\nScore:   Argentina 3 - Australia 1\n", $output);
     }
 
-    public function testEndsWithSummaryOrderedByTotalScore(): void
+    public function testShowsSummaryOfAllMatchesOrderedByTotalScore(): void
     {
         $expected = <<<'TEXT'
 
-            Summary:
+            Summary (5 matches in progress):
             1. Uruguay 6 - Italy 6
             2. Spain 10 - Brazil 2
             3. Mexico 0 - Canada 5
             4. Argentina 3 - Australia 1
             5. Germany 2 - France 2
+
+            TEXT;
+
+        self::assertStringContainsString($expected, self::runCommand());
+    }
+
+    public function testEndsWithSummaryWithoutFinishedMatchesAndFinishedGames(): void
+    {
+        $expected = <<<'TEXT'
+
+            Finished: Spain 10 - Brazil 2
+            Finished: Germany 2 - France 2
+
+            Summary after finishing (3 matches in progress):
+            1. Uruguay 6 - Italy 6
+            2. Mexico 0 - Canada 5
+            3. Argentina 3 - Australia 1
+
+            Finished games (2):
+            1. Spain 10 - Brazil 2
+            2. Germany 2 - France 2
 
             TEXT;
 

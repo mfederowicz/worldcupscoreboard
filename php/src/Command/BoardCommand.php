@@ -22,6 +22,11 @@ final class BoardCommand extends Command
         ['Argentina', 'Australia', 3, 1],
     ];
 
+    /**
+     * Positions in MATCHES of the matches that are finished during the demo.
+     */
+    private const array FINISHED = [1, 2];
+
     public function __construct(private readonly int $delayInMilliseconds = 500)
     {
         parent::__construct();
@@ -30,6 +35,9 @@ final class BoardCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $board = new Board();
+        $matches = [];
+
+        $output->writeln(['World Cup finals begin:', '']);
 
         foreach (self::MATCHES as [$homeTeam, $awayTeam, $homeScore, $awayScore]) {
             $match = new FootballMatch($homeTeam, $awayTeam);
@@ -41,15 +49,35 @@ final class BoardCommand extends Command
 
             $board->updateScore($match, $homeScore, $awayScore);
             $output->writeln('Score:   ' . self::describe($match));
+
+            $matches[] = $match;
         }
 
-        $output->writeln(['', 'Summary:']);
+        self::writeList($output, 'Summary (%d matches in progress):', $board->summary());
 
-        foreach ($board->summary() as $position => $match) {
-            $output->writeln(sprintf('%d. %s', $position + 1, self::describe($match)));
+        $output->writeln('');
+
+        foreach (self::FINISHED as $index) {
+            $board->finishGame($matches[$index]);
+            $output->writeln('Finished: ' . self::describe($matches[$index]));
         }
+
+        self::writeList($output, 'Summary after finishing (%d matches in progress):', $board->summary());
+        self::writeList($output, 'Finished games (%d):', $board->finishedGames());
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param list<FootballMatch> $matches
+     */
+    private static function writeList(OutputInterface $output, string $title, array $matches): void
+    {
+        $output->writeln(['', sprintf($title, count($matches))]);
+
+        foreach ($matches as $position => $match) {
+            $output->writeln(sprintf('%d. %s', $position + 1, self::describe($match)));
+        }
     }
 
     private static function describe(FootballMatch $match): string
