@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace WorldCupScoreBoard\Tests\Unit\Domain;
 
-use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use WorldCupScoreBoard\Domain\Exception\InvalidFootballMatchException;
+use WorldCupScoreBoard\Domain\Exception\InvalidFootballMatchStateException;
 use WorldCupScoreBoard\Domain\FootballMatch;
 use WorldCupScoreBoard\Domain\Uuid;
 use WorldCupScoreBoard\Infrastructure\UuidGenerator;
 use WorldCupScoreBoard\Tests\Unit\CreatesMatches;
 
 #[CoversClass(FootballMatch::class)]
+#[UsesClass(InvalidFootballMatchException::class)]
+#[UsesClass(InvalidFootballMatchStateException::class)]
 #[UsesClass(Uuid::class)]
 #[UsesClass(UuidGenerator::class)]
 final class FootballMatchTest extends TestCase
@@ -46,7 +48,7 @@ final class FootballMatchTest extends TestCase
     #[DataProvider('invalidTeams')]
     public function testInvalidTeamsAreRejected(string $homeTeam, string $awayTeam): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidFootballMatchException::class);
 
         self::newMatch($homeTeam, $awayTeam);
     }
@@ -78,7 +80,7 @@ final class FootballMatchTest extends TestCase
     {
         $match = self::startedMatch();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidFootballMatchStateException::class);
 
         $match->startMatch();
     }
@@ -108,7 +110,7 @@ final class FootballMatchTest extends TestCase
     {
         $match = self::startedMatch();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidFootballMatchException::class);
 
         $match->updateScore(1, -1);
     }
@@ -117,7 +119,7 @@ final class FootballMatchTest extends TestCase
     {
         $match = self::newMatch('Mexico', 'Canada');
 
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidFootballMatchStateException::class);
 
         $match->updateScore(1, 0);
     }
@@ -127,7 +129,7 @@ final class FootballMatchTest extends TestCase
         $match = self::startedMatch();
         $match->finishMatch();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidFootballMatchStateException::class);
 
         $match->updateScore(1, 0);
     }
@@ -148,7 +150,7 @@ final class FootballMatchTest extends TestCase
     {
         $match = self::newMatch('Mexico', 'Canada');
 
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidFootballMatchStateException::class);
 
         $match->finishMatch();
     }
@@ -158,7 +160,7 @@ final class FootballMatchTest extends TestCase
         $match = self::startedMatch();
         $match->finishMatch();
 
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidFootballMatchStateException::class);
 
         $match->finishMatch();
     }

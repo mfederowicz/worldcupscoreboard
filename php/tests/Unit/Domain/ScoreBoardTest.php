@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace WorldCupScoreBoard\Tests\Unit\Domain;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use WorldCupScoreBoard\Domain\Exception\FootballMatchNotFoundException;
+use WorldCupScoreBoard\Domain\Exception\InvalidFootballMatchException;
+use WorldCupScoreBoard\Domain\Exception\TeamAlreadyPlayingException;
 use WorldCupScoreBoard\Domain\FootballMatch;
-use WorldCupScoreBoard\Domain\FootballMatchNotFoundException;
 use WorldCupScoreBoard\Domain\ScoreBoard;
-use WorldCupScoreBoard\Domain\TeamAlreadyPlayingException;
 use WorldCupScoreBoard\Domain\Uuid;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
 use WorldCupScoreBoard\Infrastructure\UuidGenerator;
@@ -22,6 +22,7 @@ use WorldCupScoreBoard\Tests\Unit\CreatesMatches;
 #[UsesClass(FootballMatch::class)]
 #[UsesClass(FootballMatchNotFoundException::class)]
 #[UsesClass(InMemoryFootballMatchRepository::class)]
+#[UsesClass(InvalidFootballMatchException::class)]
 #[UsesClass(TeamAlreadyPlayingException::class)]
 #[UsesClass(Uuid::class)]
 #[UsesClass(UuidGenerator::class)]
@@ -171,7 +172,7 @@ final class ScoreBoardTest extends TestCase
         $match = self::newMatch('Mexico', 'Canada');
         $board->startGame($match);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidFootballMatchException::class);
 
         $board->updateScore($match, -1, 0);
     }

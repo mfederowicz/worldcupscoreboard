@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace WorldCupScoreBoard\Domain;
 
+use WorldCupScoreBoard\Domain\Exception\FootballMatchNotFoundException;
+use WorldCupScoreBoard\Domain\Exception\TeamAlreadyPlayingException;
+
 final class ScoreBoard
 {
     /**

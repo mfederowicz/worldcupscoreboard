@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace WorldCupScoreBoard\Domain;
 
 use DateTimeImmutable;
-use InvalidArgumentException;
-use LogicException;
+use WorldCupScoreBoard\Domain\Exception\InvalidFootballMatchException;
+use WorldCupScoreBoard\Domain\Exception\InvalidFootballMatchStateException;
 
 final class FootballMatch
 {
@@ -26,11 +26,11 @@ final class FootballMatch
         $awayTeam = trim($awayTeam);
 
         if ($homeTeam === '' || $awayTeam === '') {
-            throw new InvalidArgumentException('Team name must not be empty.');
+            throw new InvalidFootballMatchException('Team name must not be empty.');
         }
 
         if (mb_strtolower($homeTeam) === mb_strtolower($awayTeam)) {
-            throw new InvalidArgumentException('A team cannot play against itself.');
+            throw new InvalidFootballMatchException('A team cannot play against itself.');
         }
 
         $this->homeTeam = $homeTeam;
@@ -40,7 +40,7 @@ final class FootballMatch
     public function startMatch(): void
     {
         if ($this->startMatchTime !== null) {
-            throw new LogicException('Match has already been started.');
+            throw new InvalidFootballMatchStateException('Match has already been started.');
         }
 
         $this->startMatchTime = new DateTimeImmutable();
@@ -58,7 +58,7 @@ final class FootballMatch
         $this->assertInProgress();
 
         if ($homeScore < 0 || $awayScore < 0) {
-            throw new InvalidArgumentException('Score must not be negative.');
+            throw new InvalidFootballMatchException('Score must not be negative.');
         }
 
         $this->homeScore = $homeScore;
@@ -68,7 +68,7 @@ final class FootballMatch
     private function assertInProgress(): void
     {
         if ($this->startMatchTime === null || $this->finishMatchTime !== null) {
-            throw new LogicException('Match is not in progress.');
+            throw new InvalidFootballMatchStateException('Match is not in progress.');
         }
     }
 }
