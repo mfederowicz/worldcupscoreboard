@@ -8,12 +8,19 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Domain\Uuid;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
+use WorldCupScoreBoard\Infrastructure\UuidGenerator;
+use WorldCupScoreBoard\Tests\Unit\CreatesMatches;
 
 #[CoversClass(InMemoryFootballMatchRepository::class)]
 #[UsesClass(FootballMatch::class)]
+#[UsesClass(Uuid::class)]
+#[UsesClass(UuidGenerator::class)]
 final class InMemoryFootballMatchRepositoryTest extends TestCase
 {
+    use CreatesMatches;
+
     public function testNewRepositoryIsEmpty(): void
     {
         $repository = new InMemoryFootballMatchRepository();
@@ -24,7 +31,7 @@ final class InMemoryFootballMatchRepositoryTest extends TestCase
     public function testSavedMatchIsFoundById(): void
     {
         $repository = new InMemoryFootballMatchRepository();
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $repository->save($match);
 
@@ -35,14 +42,14 @@ final class InMemoryFootballMatchRepositoryTest extends TestCase
     {
         $repository = new InMemoryFootballMatchRepository();
 
-        self::assertNull($repository->find('unknown-id'));
+        self::assertNull($repository->find(self::unknownId()));
     }
 
     public function testAllReturnsEverySavedMatch(): void
     {
         $repository = new InMemoryFootballMatchRepository();
-        $first = new FootballMatch('Mexico', 'Canada');
-        $second = new FootballMatch('Spain', 'Brazil');
+        $first = self::newMatch('Mexico', 'Canada');
+        $second = self::newMatch('Spain', 'Brazil');
 
         $repository->save($first);
         $repository->save($second);
@@ -53,7 +60,7 @@ final class InMemoryFootballMatchRepositoryTest extends TestCase
     public function testSavingSameMatchTwiceDoesNotDuplicateIt(): void
     {
         $repository = new InMemoryFootballMatchRepository();
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $repository->save($match);
         $repository->save($match);
@@ -64,8 +71,8 @@ final class InMemoryFootballMatchRepositoryTest extends TestCase
     public function testRemovedMatchIsNoLongerFound(): void
     {
         $repository = new InMemoryFootballMatchRepository();
-        $removed = new FootballMatch('Mexico', 'Canada');
-        $kept = new FootballMatch('Spain', 'Brazil');
+        $removed = self::newMatch('Mexico', 'Canada');
+        $kept = self::newMatch('Spain', 'Brazil');
         $repository->save($removed);
         $repository->save($kept);
 
@@ -78,11 +85,16 @@ final class InMemoryFootballMatchRepositoryTest extends TestCase
     public function testRemovingUnknownIdDoesNothing(): void
     {
         $repository = new InMemoryFootballMatchRepository();
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $repository->save($match);
 
-        $repository->remove('unknown-id');
+        $repository->remove(self::unknownId());
 
         self::assertSame([$match], $repository->all());
+    }
+
+    private static function unknownId(): Uuid
+    {
+        return Uuid::fromString('00000000-0000-4000-8000-000000000000');
     }
 }

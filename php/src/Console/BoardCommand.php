@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use WorldCupScoreBoard\Domain\Board;
 use WorldCupScoreBoard\Domain\FootballMatch;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
+use WorldCupScoreBoard\Infrastructure\UuidGenerator;
 
 #[AsCommand(name: 'board', description: 'Plays example matches and shows the score board summary')]
 final class BoardCommand extends Command
@@ -36,12 +37,13 @@ final class BoardCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $board = new Board(new InMemoryFootballMatchRepository());
+        $ids = new UuidGenerator();
         $matches = [];
 
         $output->writeln(['World Cup finals begin:', '']);
 
         foreach (self::MATCHES as [$homeTeam, $awayTeam, $homeScore, $awayScore]) {
-            $match = new FootballMatch($homeTeam, $awayTeam);
+            $match = new FootballMatch($ids->generate(), $homeTeam, $awayTeam);
 
             $board->startGame($match);
             $output->writeln(sprintf('Started: %s - %s', $match->homeTeam, $match->awayTeam));

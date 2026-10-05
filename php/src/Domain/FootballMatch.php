@@ -7,11 +7,9 @@ namespace WorldCupScoreBoard\Domain;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use LogicException;
-use Symfony\Component\Uid\Uuid;
 
 final class FootballMatch
 {
-    public readonly string $matchId;
     public readonly string $homeTeam;
     public readonly string $awayTeam;
     public private(set) int $homeScore = 0;
@@ -19,8 +17,11 @@ final class FootballMatch
     public private(set) ?DateTimeImmutable $startMatchTime = null;
     public private(set) ?DateTimeImmutable $finishMatchTime = null;
 
-    public function __construct(string $homeTeam, string $awayTeam)
-    {
+    public function __construct(
+        public readonly Uuid $matchId,
+        string $homeTeam,
+        string $awayTeam,
+    ) {
         $homeTeam = trim($homeTeam);
         $awayTeam = trim($awayTeam);
 
@@ -32,7 +33,6 @@ final class FootballMatch
             throw new InvalidArgumentException('A team cannot play against itself.');
         }
 
-        $this->matchId = Uuid::v4()->toRfc4122();
         $this->homeTeam = $homeTeam;
         $this->awayTeam = $awayTeam;
     }

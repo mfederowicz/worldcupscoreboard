@@ -13,15 +13,22 @@ use WorldCupScoreBoard\Domain\Board;
 use WorldCupScoreBoard\Domain\FootballMatch;
 use WorldCupScoreBoard\Domain\FootballMatchNotFoundException;
 use WorldCupScoreBoard\Domain\TeamAlreadyPlayingException;
+use WorldCupScoreBoard\Domain\Uuid;
 use WorldCupScoreBoard\Infrastructure\InMemoryFootballMatchRepository;
+use WorldCupScoreBoard\Infrastructure\UuidGenerator;
+use WorldCupScoreBoard\Tests\Unit\CreatesMatches;
 
 #[CoversClass(Board::class)]
 #[UsesClass(FootballMatch::class)]
 #[UsesClass(FootballMatchNotFoundException::class)]
 #[UsesClass(InMemoryFootballMatchRepository::class)]
 #[UsesClass(TeamAlreadyPlayingException::class)]
+#[UsesClass(Uuid::class)]
+#[UsesClass(UuidGenerator::class)]
 final class BoardTest extends TestCase
 {
+    use CreatesMatches;
+
     private const array EXAMPLE = [
         ['Mexico', 'Canada', 0, 5],
         ['Spain', 'Brazil', 10, 2],
@@ -49,7 +56,7 @@ final class BoardTest extends TestCase
     public function testStartGameStartsMatchAndPutsItOnBoard(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $board->startGame($match);
 
@@ -61,7 +68,7 @@ final class BoardTest extends TestCase
     {
         $repository = new InMemoryFootballMatchRepository();
         $board = new Board($repository);
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $board->startGame($match);
 
@@ -72,9 +79,9 @@ final class BoardTest extends TestCase
     public function testTeamCannotPlayTwoMatchesAtOnce(string $homeTeam, string $awayTeam): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $live = new FootballMatch('Mexico', 'Canada');
+        $live = self::newMatch('Mexico', 'Canada');
         $board->startGame($live);
-        $rejected = new FootballMatch($homeTeam, $awayTeam);
+        $rejected = self::newMatch($homeTeam, $awayTeam);
 
         try {
             $board->startGame($rejected);
@@ -101,7 +108,7 @@ final class BoardTest extends TestCase
     public function testFinishGameFinishesMatchAndRemovesItFromBoard(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $board->startGame($match);
 
         $board->finishGame($match);
@@ -114,10 +121,10 @@ final class BoardTest extends TestCase
     public function testTeamsCanPlayAgainAfterTheirMatchIsFinished(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $first = new FootballMatch('Mexico', 'Canada');
+        $first = self::newMatch('Mexico', 'Canada');
         $board->startGame($first);
         $board->finishGame($first);
-        $second = new FootballMatch('Mexico', 'Canada');
+        $second = self::newMatch('Mexico', 'Canada');
 
         $board->startGame($second);
 
@@ -130,13 +137,13 @@ final class BoardTest extends TestCase
 
         $this->expectException(FootballMatchNotFoundException::class);
 
-        $board->finishGame(new FootballMatch('Mexico', 'Canada'));
+        $board->finishGame(self::newMatch('Mexico', 'Canada'));
     }
 
     public function testMatchCannotBeFinishedTwice(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $board->startGame($match);
         $board->finishGame($match);
 
@@ -148,7 +155,7 @@ final class BoardTest extends TestCase
     public function testUpdateScoreChangesScoreOfMatchOnBoard(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $board->startGame($match);
 
         $board->updateScore($match, 0, 5);
@@ -161,7 +168,7 @@ final class BoardTest extends TestCase
     public function testNegativeScoreIsRejected(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $board->startGame($match);
 
         $this->expectException(InvalidArgumentException::class);
@@ -175,13 +182,13 @@ final class BoardTest extends TestCase
 
         $this->expectException(FootballMatchNotFoundException::class);
 
-        $board->updateScore(new FootballMatch('Mexico', 'Canada'), 1, 0);
+        $board->updateScore(self::newMatch('Mexico', 'Canada'), 1, 0);
     }
 
     public function testScoreOfFinishedMatchCannotBeUpdated(): void
     {
         $board = new Board(new InMemoryFootballMatchRepository());
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $board->startGame($match);
         $board->finishGame($match);
 
@@ -219,7 +226,7 @@ final class BoardTest extends TestCase
         $matches = [];
 
         foreach (self::EXAMPLE as [$homeTeam, $awayTeam, $homeScore, $awayScore]) {
-            $match = new FootballMatch($homeTeam, $awayTeam);
+            $match = self::newMatch($homeTeam, $awayTeam);
             $board->startGame($match);
             $board->updateScore($match, $homeScore, $awayScore);
             $matches[] = $match;

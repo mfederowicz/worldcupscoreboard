@@ -73,7 +73,7 @@ final class Board implements ScoreBoard
     private function assertOnBoard(FootballMatch $match): void
     {
         if ($this->matches->find($match->matchId) === null) {
-            throw new FootballMatchNotFoundException(sprintf('Match "%s" is not on the board.', $match->matchId));
+            throw new FootballMatchNotFoundException(sprintf('Match "%s" is not on the board.', $match->matchId->toString()));
         }
     }
 

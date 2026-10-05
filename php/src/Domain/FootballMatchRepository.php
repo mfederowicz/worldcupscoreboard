@@ -8,9 +8,9 @@ interface FootballMatchRepository
 {
     public function save(FootballMatch $match): void;
 
-    public function remove(string $matchId): void;
+    public function remove(Uuid $matchId): void;
 
-    public function find(string $matchId): ?FootballMatch;
+    public function find(Uuid $matchId): ?FootballMatch;
 
     /**
      * @return list<FootballMatch>

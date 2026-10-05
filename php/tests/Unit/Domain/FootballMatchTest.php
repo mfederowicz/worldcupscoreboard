@@ -8,15 +8,23 @@ use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use WorldCupScoreBoard\Domain\FootballMatch;
+use WorldCupScoreBoard\Domain\Uuid;
+use WorldCupScoreBoard\Infrastructure\UuidGenerator;
+use WorldCupScoreBoard\Tests\Unit\CreatesMatches;
 
 #[CoversClass(FootballMatch::class)]
+#[UsesClass(Uuid::class)]
+#[UsesClass(UuidGenerator::class)]
 final class FootballMatchTest extends TestCase
 {
+    use CreatesMatches;
+
     public function testNewMatchIsNotStartedAndHasNoGoals(): void
     {
-        $match = new FootballMatch(' Mexico ', 'Canada');
+        $match = self::newMatch(' Mexico ', 'Canada');
 
         self::assertSame('Mexico', $match->homeTeam);
         self::assertSame('Canada', $match->awayTeam);
@@ -26,12 +34,13 @@ final class FootballMatchTest extends TestCase
         self::assertNull($match->finishMatchTime);
     }
 
-    public function testEachMatchGetsItsOwnId(): void
+    public function testMatchKeepsGivenId(): void
     {
-        $first = new FootballMatch('Mexico', 'Canada');
-        $second = new FootballMatch('Mexico', 'Canada');
+        $matchId = Uuid::fromString('ffd44b6a-005e-4a56-9c1f-1f59c33ab2f7');
 
-        self::assertNotSame($first->matchId, $second->matchId);
+        $match = new FootballMatch($matchId, 'Mexico', 'Canada');
+
+        self::assertSame($matchId, $match->matchId);
     }
 
     #[DataProvider('invalidTeams')]
@@ -39,7 +48,7 @@ final class FootballMatchTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new FootballMatch($homeTeam, $awayTeam);
+        self::newMatch($homeTeam, $awayTeam);
     }
 
     /**
@@ -57,7 +66,7 @@ final class FootballMatchTest extends TestCase
 
     public function testStartMatchSetsStartTime(): void
     {
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $match->startMatch();
 
@@ -106,7 +115,7 @@ final class FootballMatchTest extends TestCase
 
     public function testScoreCannotBeUpdatedBeforeStart(): void
     {
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $this->expectException(LogicException::class);
 
@@ -137,7 +146,7 @@ final class FootballMatchTest extends TestCase
 
     public function testMatchCannotBeFinishedBeforeStart(): void
     {
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
 
         $this->expectException(LogicException::class);
 
@@ -156,7 +165,7 @@ final class FootballMatchTest extends TestCase
 
     private static function startedMatch(): FootballMatch
     {
-        $match = new FootballMatch('Mexico', 'Canada');
+        $match = self::newMatch('Mexico', 'Canada');
         $match->startMatch();
 
         return $match;

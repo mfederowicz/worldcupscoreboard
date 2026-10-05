@@ -6,6 +6,7 @@ namespace WorldCupScoreBoard\Infrastructure;
 
 use WorldCupScoreBoard\Domain\FootballMatch;
 use WorldCupScoreBoard\Domain\FootballMatchRepository;
+use WorldCupScoreBoard\Domain\Uuid;
 
 final class InMemoryFootballMatchRepository implements FootballMatchRepository
 {
@@ -16,17 +17,17 @@ final class InMemoryFootballMatchRepository implements FootballMatchRepository
 
     public function save(FootballMatch $match): void
     {
-        $this->matches[$match->matchId] = $match;
+        $this->matches[$match->matchId->toString()] = $match;
     }
 
-    public function remove(string $matchId): void
+    public function remove(Uuid $matchId): void
     {
-        unset($this->matches[$matchId]);
+        unset($this->matches[$matchId->toString()]);
     }
 
-    public function find(string $matchId): ?FootballMatch
+    public function find(Uuid $matchId): ?FootballMatch
     {
-        return $this->matches[$matchId] ?? null;
+        return $this->matches[$matchId->toString()] ?? null;
     }
 
     public function all(): array
