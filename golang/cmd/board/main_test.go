@@ -30,7 +30,7 @@ func TestShowsEachMatchBeingStartedAndScored(t *testing.T) {
 	}
 }
 
-func TestEndsWithSummaryOfAllMatchesOrderedByTotalScore(t *testing.T) {
+func TestShowsSummaryOfAllMatchesOrderedByTotalScore(t *testing.T) {
 	want := `
 Summary (5 matches in progress):
 1. Uruguay 6 - Italy 6
@@ -38,6 +38,26 @@ Summary (5 matches in progress):
 3. Mexico 0 - Canada 5
 4. Argentina 3 - Australia 1
 5. Germany 2 - France 2
+`
+
+	if output := runDemo(t); !strings.Contains(output, want) {
+		t.Errorf("output does not contain %q:\n%s", want, output)
+	}
+}
+
+func TestEndsWithSummaryWithoutFinishedMatchesAndFinishedGames(t *testing.T) {
+	want := `
+Finished: Spain 10 - Brazil 2
+Finished: Germany 2 - France 2
+
+Summary after finishing (3 matches in progress):
+1. Uruguay 6 - Italy 6
+2. Mexico 0 - Canada 5
+3. Argentina 3 - Australia 1
+
+Finished games (2):
+1. Spain 10 - Brazil 2
+2. Germany 2 - France 2
 `
 
 	if output := runDemo(t); !strings.HasSuffix(output, want) {

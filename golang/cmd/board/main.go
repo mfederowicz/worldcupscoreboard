@@ -23,6 +23,10 @@ var matches = []struct {
 	{"Argentina", "Australia", 3, 1},
 }
 
+// finished holds the positions in matches of the matches that are finished
+// during the demo.
+var finished = []int{1, 2}
+
 func main() {
 	if err := run(os.Stdout, 500*time.Millisecond); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -34,6 +38,7 @@ func main() {
 // delay between the start of a match and its score.
 func run(out io.Writer, delay time.Duration) error {
 	board := scoreboard.NewScoreBoard(scoreboard.NewInMemoryFootballMatchRepository())
+	started := []*scoreboard.FootballMatch{}
 
 	fmt.Fprintln(out, "World Cup finals begin:")
 	fmt.Fprintln(out)
@@ -55,9 +60,23 @@ func run(out io.Writer, delay time.Duration) error {
 			return err
 		}
 		fmt.Fprintf(out, "Score:   %s\n", describe(match))
+
+		started = append(started, match)
 	}
 
 	writeList(out, "Summary (%d matches in progress):", board.Summary())
+
+	fmt.Fprintln(out)
+
+	for _, index := range finished {
+		if err := board.FinishGame(started[index]); err != nil {
+			return err
+		}
+		fmt.Fprintf(out, "Finished: %s\n", describe(started[index]))
+	}
+
+	writeList(out, "Summary after finishing (%d matches in progress):", board.Summary())
+	writeList(out, "Finished games (%d):", board.FinishedGames())
 
 	return nil
 }
