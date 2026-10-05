@@ -1,0 +1,35 @@
+{
+    "name": "mfederowicz/worldcupscoreboard",
+    "description": "World Cup matches score board",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "bump-after-update": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "WorldcupScoreBoard\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WorldcupScoreBoard\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marcin Federowicz",
+            "email": "marcin.federowicz@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.4",
+        "symfony/console": "8.1.*",
+        "symfony/uid": "^8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.3.4"
+    }
+}
