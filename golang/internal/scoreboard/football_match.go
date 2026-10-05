@@ -1,7 +1,6 @@
 package scoreboard
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
@@ -27,15 +26,15 @@ func NewFootballMatch(matchID UUID, homeTeam, awayTeam string) (*FootballMatch, 
 	awayTeam = strings.TrimSpace(awayTeam)
 
 	if matchID == (UUID{}) {
-		return nil, fmt.Errorf("%w: match id must not be empty", ErrInvalidFootballMatch)
+		return nil, newError(ErrInvalidFootballMatch, "Match id must not be empty.")
 	}
 
 	if homeTeam == "" || awayTeam == "" {
-		return nil, fmt.Errorf("%w: team name must not be empty", ErrInvalidFootballMatch)
+		return nil, newError(ErrInvalidFootballMatch, "Team name must not be empty.")
 	}
 
 	if strings.EqualFold(homeTeam, awayTeam) {
-		return nil, fmt.Errorf("%w: a team cannot play against itself", ErrInvalidFootballMatch)
+		return nil, newError(ErrInvalidFootballMatch, "A team cannot play against itself.")
 	}
 
 	return &FootballMatch{matchID: matchID, homeTeam: homeTeam, awayTeam: awayTeam}, nil
@@ -56,7 +55,7 @@ func (m *FootballMatch) FinishMatchTime() time.Time { return m.finishMatchTime }
 // StartMatch marks the match as started now. A match can be started once.
 func (m *FootballMatch) StartMatch() error {
 	if !m.startMatchTime.IsZero() {
-		return fmt.Errorf("%w: match has already been started", ErrInvalidFootballMatchState)
+		return newError(ErrInvalidFootballMatchState, "Match has already been started.")
 	}
 
 	m.startMatchTime = time.Now()
@@ -83,7 +82,7 @@ func (m *FootballMatch) UpdateScore(homeScore, awayScore int) error {
 	}
 
 	if homeScore < 0 || awayScore < 0 {
-		return fmt.Errorf("%w: score must not be negative", ErrInvalidFootballMatch)
+		return newError(ErrInvalidFootballMatch, "Score must not be negative.")
 	}
 
 	m.homeScore = homeScore
@@ -94,7 +93,7 @@ func (m *FootballMatch) UpdateScore(homeScore, awayScore int) error {
 
 func (m *FootballMatch) checkInProgress() error {
 	if m.startMatchTime.IsZero() || !m.finishMatchTime.IsZero() {
-		return fmt.Errorf("%w: match is not in progress", ErrInvalidFootballMatchState)
+		return newError(ErrInvalidFootballMatchState, "Match is not in progress.")
 	}
 
 	return nil

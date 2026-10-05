@@ -162,6 +162,10 @@ if errors.As(err, &scoreBoardError) {
 - **Matches are kept in a slice, not a map.** A Go map has no fixed order, and a slice keeps the
   order in which matches were added. Finding a match looks at each one in turn, which is fine for
   the few matches played at the same time.
+- **Error messages are the same sentences as in the PHP version.** They start with a capital
+  letter and end with a dot, for example `Team "Mexico" is already playing.` Go code usually
+  writes error messages in lower case without a dot. I chose the same words in both versions,
+  so both report an error in the same way.
 - **A match must not be `nil`.** Passing `nil` to the board is a mistake in the calling code and
   stops the program, as it does in most Go code.
 

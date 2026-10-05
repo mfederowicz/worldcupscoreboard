@@ -3,7 +3,6 @@ package scoreboard
 
 import (
 	"cmp"
-	"fmt"
 	"slices"
 	"strings"
 )
@@ -24,7 +23,7 @@ func NewScoreBoard(matches FootballMatchRepository) *ScoreBoard {
 func (b *ScoreBoard) StartGame(match *FootballMatch) error {
 	for _, team := range []string{match.HomeTeam(), match.AwayTeam()} {
 		if b.isPlaying(team) {
-			return fmt.Errorf("%w: %q", ErrTeamAlreadyPlaying, team)
+			return newError(ErrTeamAlreadyPlaying, "Team \"%s\" is already playing.", team)
 		}
 	}
 
@@ -94,7 +93,7 @@ func byTotalScore(matches []*FootballMatch) []*FootballMatch {
 
 func (b *ScoreBoard) checkOnBoard(match *FootballMatch) error {
 	if _, ok := b.matches.Find(match.MatchID()); !ok {
-		return fmt.Errorf("%w: %q is not on the board", ErrFootballMatchNotFound, match.MatchID())
+		return newError(ErrFootballMatchNotFound, "Match \"%s\" is not on the board.", match.MatchID())
 	}
 
 	return nil

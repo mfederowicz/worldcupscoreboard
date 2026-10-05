@@ -265,3 +265,19 @@ func TestChangingResultOfFinishedGamesDoesNotChangeBoard(t *testing.T) {
 		t.Errorf("FinishedGames() = %q, want %q", got, exampleSummary)
 	}
 }
+
+func TestErrorSaysWhatWentWrong(t *testing.T) {
+	board := newBoard()
+	startGame(t, board, "Mexico", "Canada")
+
+	err := board.StartGame(newMatch(t, "Mexico", "Germany"))
+
+	if got, want := fmt.Sprint(err), `Team "Mexico" is already playing.`; got != want {
+		t.Errorf("error = %q, want %q", got, want)
+	}
+
+	var scoreBoardError ScoreBoardError
+	if !errors.As(err, &scoreBoardError) || scoreBoardError != ErrTeamAlreadyPlaying {
+		t.Errorf("error %v is not ErrTeamAlreadyPlaying", err)
+	}
+}
