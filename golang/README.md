@@ -19,12 +19,17 @@ git clone <repository-url> scoreboard
 cd scoreboard/golang
 make tests     # runs the tests: go test -v -race ./...
 make board     # builds the demo and runs it: ./bin/board
+make example   # runs a short example: go run ./examples/basic
 ```
 
 There is nothing to install first, because the code has no dependencies.
 
 The demo starts five matches, one every half a second, and sets their scores. Then it shows the
 board, finishes two matches, and shows the board and the finished matches again.
+
+The example in `examples/basic/main.go` is one plain Go file with comments. It starts two matches,
+updates the scores, shows the board, finishes a match and shows one error. It is the quickest
+way to see how to call the code from your own program.
 
 ### Building the demo
 
@@ -58,7 +63,7 @@ board.FinishedGames()                  // finished matches, in the same order
 ```
 
 Go has no exceptions. A function that can fail returns an error as its last value, and the
-caller checks it. A full, working example is the demo in `cmd/board/main.go`.
+caller checks it. A full, working example is in `examples/basic/main.go`.
 
 ### Order of the matches
 
@@ -68,12 +73,15 @@ If two matches have the same number of goals, the one that started later comes f
 ## How the code is organised
 
 ```
-Makefile                                      build, board, tests
+Makefile                                      build, board, example, tests
 go.mod                                        the name of the module and the Go version
 cmd/
   board/
     main.go                                   the demo
     main_test.go
+examples/
+  basic/
+    main.go                                   a short program that uses the score board
 internal/
   scoreboard/                                 the score board (one Go package)
     score_board.go                            start, update, finish, summary
