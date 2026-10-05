@@ -15,7 +15,7 @@ same rules, written the way Go code is usually written.
 ## How to run it
 
 ```
-git clone <repository-url> scoreboard
+git clone https://github.com/mfederowicz/worldcupscoreboard.git scoreboard
 cd scoreboard/golang
 make tests     # runs the tests: go test -v -race ./...
 make board     # builds the demo and runs it: ./bin/board
@@ -171,7 +171,7 @@ It cannot be used from another project yet, for two reasons:
 
 - The package is inside `internal/`, which only this module may import.
 - The module is named `worldcupscoreboard`. A module that others can download needs its
-  repository address as its name, for example `github.com/<user>/scoreboard/golang`.
+  repository address as its name, for example `github.com/mfederowicz/worldcupscoreboard/golang`.
 
 To publish it, move `internal/scoreboard` out of `internal/` and change the module name in
 `go.mod`. Other projects could then add it with `go get`.

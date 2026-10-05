@@ -12,7 +12,7 @@ Everything is kept in memory. There is no framework, no database and no web serv
 ## How to run it
 
 ```
-git clone <repository-url> scoreboard
+git clone https://github.com/mfederowicz/worldcupscoreboard.git scoreboard
 cd scoreboard/php
 composer install
 make tests     # runs the tests (PHPUnit)

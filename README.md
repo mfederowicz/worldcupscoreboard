@@ -24,7 +24,7 @@ make board     # runs a short demo in the terminal
 ## Quick start (PHP)
 
 ```
-git clone <repository-url> scoreboard
+git clone https://github.com/mfederowicz/worldcupscoreboard.git scoreboard
 cd scoreboard/php
 composer install
 make tests
@@ -36,7 +36,7 @@ More details, the list of special cases and the design choices are in [`php/READ
 ## Quick start (Go)
 
 ```
-git clone <repository-url> scoreboard
+git clone https://github.com/mfederowicz/worldcupscoreboard.git scoreboard
 cd scoreboard/golang
 make tests
 make board
