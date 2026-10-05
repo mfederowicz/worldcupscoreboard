@@ -1,11 +1,11 @@
 # World Cup Score Board — Go
 
-A small library that keeps the scores of football matches that are being played right now.
+A small application that keeps the scores of football matches that are being played right now.
 Everything is kept in memory. There is no framework, no database and no web server.
 It uses only the Go standard library.
 
-This is the same idea as the PHP version in [`../php/`](../php/), with the same names and the
-same rules, written the way Go code is usually written.
+This is the Go version. It follows the PHP version in [`../php/`](../php/): the same names and
+the same rules, written the way Go code is usually written.
 
 ## What you need
 

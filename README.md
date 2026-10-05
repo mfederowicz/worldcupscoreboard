@@ -1,12 +1,12 @@
 # World Cup Score Board
 
-A small library that keeps the scores of football matches that are being played right now.
+A small application that keeps the scores of football matches that are being played right now.
 It can start a match, update its score, finish it, and show all matches in order: most goals
 first, and for the same number of goals, the match that started later first.
 
 Everything is kept in memory. There is no framework, no database and no web server.
 
-The same idea is written in two languages, each in its own folder:
+There are two versions, each in its own folder:
 
 | Folder | Language | Status |
 |---|---|---|
