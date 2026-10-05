@@ -1,0 +1,31 @@
+name: Go tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'golang/**'
+      - '.github/workflows/go.yml'
+  pull_request:
+    paths:
+      - 'golang/**'
+      - '.github/workflows/go.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: golang
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: golang/go.mod
+          cache: false
+
+      - run: make tests
