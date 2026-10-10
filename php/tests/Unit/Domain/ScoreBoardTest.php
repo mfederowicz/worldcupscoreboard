@@ -46,50 +46,55 @@ final class ScoreBoardTest extends TestCase
         'Germany 2 - France 2',
     ];
 
+    private InMemoryFootballMatchRepository $repository;
+
+    private ScoreBoard $board;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        $this->repository = new InMemoryFootballMatchRepository();
+        $this->board = new ScoreBoard($this->repository);
+    }
+
     public function testNewBoardIsEmpty(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
-
-        self::assertSame([], $board->summary());
-        self::assertSame([], $board->finishedGames());
+        self::assertSame([], $this->board->summary());
+        self::assertSame([], $this->board->finishedGames());
     }
 
     public function testStartGameStartsMatchAndPutsItOnBoard(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $match = self::newMatch('Mexico', 'Canada');
 
-        $board->startGame($match);
+        $this->board->startGame($match);
 
         self::assertNotNull($match->startMatchTime);
-        self::assertSame([$match], $board->summary());
+        self::assertSame([$match], $this->board->summary());
     }
 
     public function testStartGameStoresMatchInGivenRepository(): void
     {
-        $repository = new InMemoryFootballMatchRepository();
-        $board = new ScoreBoard($repository);
         $match = self::newMatch('Mexico', 'Canada');
 
-        $board->startGame($match);
+        $this->board->startGame($match);
 
-        self::assertSame($match, $repository->find($match->matchId));
+        self::assertSame($match, $this->repository->find($match->matchId));
     }
 
     #[DataProvider('matchesWithBusyTeam')]
     public function testTeamCannotPlayTwoMatchesAtOnce(string $homeTeam, string $awayTeam): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $live = self::newMatch('Mexico', 'Canada');
-        $board->startGame($live);
+        $this->board->startGame($live);
         $rejected = self::newMatch($homeTeam, $awayTeam);
 
         try {
-            $board->startGame($rejected);
+            $this->board->startGame($rejected);
             self::fail('Expected the match to be rejected.');
         } catch (TeamAlreadyPlayingException) {
             self::assertNull($rejected->startMatchTime);
-            self::assertSame([$live], $board->summary());
+            self::assertSame([$live], $this->board->summary());
         }
     }
 
@@ -108,115 +113,103 @@ final class ScoreBoardTest extends TestCase
 
     public function testFinishGameFinishesMatchAndRemovesItFromBoard(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $match = self::newMatch('Mexico', 'Canada');
-        $board->startGame($match);
+        $this->board->startGame($match);
 
-        $board->finishGame($match);
+        $this->board->finishGame($match);
 
         self::assertNotNull($match->finishMatchTime);
-        self::assertSame([], $board->summary());
-        self::assertSame([$match], $board->finishedGames());
+        self::assertSame([], $this->board->summary());
+        self::assertSame([$match], $this->board->finishedGames());
     }
 
     public function testTeamsCanPlayAgainAfterTheirMatchIsFinished(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $first = self::newMatch('Mexico', 'Canada');
-        $board->startGame($first);
-        $board->finishGame($first);
+        $this->board->startGame($first);
+        $this->board->finishGame($first);
         $second = self::newMatch('Mexico', 'Canada');
 
-        $board->startGame($second);
+        $this->board->startGame($second);
 
-        self::assertSame([$second], $board->summary());
+        self::assertSame([$second], $this->board->summary());
     }
 
     public function testMatchThatIsNotOnBoardCannotBeFinished(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
-
         $this->expectException(FootballMatchNotFoundException::class);
 
-        $board->finishGame(self::newMatch('Mexico', 'Canada'));
+        $this->board->finishGame(self::newMatch('Mexico', 'Canada'));
     }
 
     public function testMatchCannotBeFinishedTwice(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $match = self::newMatch('Mexico', 'Canada');
-        $board->startGame($match);
-        $board->finishGame($match);
+        $this->board->startGame($match);
+        $this->board->finishGame($match);
 
         $this->expectException(FootballMatchNotFoundException::class);
 
-        $board->finishGame($match);
+        $this->board->finishGame($match);
     }
 
     public function testUpdateScoreChangesScoreOfMatchOnBoard(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $match = self::newMatch('Mexico', 'Canada');
-        $board->startGame($match);
+        $this->board->startGame($match);
 
-        $board->updateScore($match, 0, 5);
+        $this->board->updateScore($match, 0, 5);
 
         self::assertSame(0, $match->homeScore);
         self::assertSame(5, $match->awayScore);
-        self::assertSame([$match], $board->summary());
+        self::assertSame([$match], $this->board->summary());
     }
 
     public function testNegativeScoreIsRejected(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $match = self::newMatch('Mexico', 'Canada');
-        $board->startGame($match);
+        $this->board->startGame($match);
 
         $this->expectException(InvalidFootballMatchException::class);
 
-        $board->updateScore($match, -1, 0);
+        $this->board->updateScore($match, -1, 0);
     }
 
     public function testScoreOfMatchThatIsNotOnBoardCannotBeUpdated(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
-
         $this->expectException(FootballMatchNotFoundException::class);
 
-        $board->updateScore(self::newMatch('Mexico', 'Canada'), 1, 0);
+        $this->board->updateScore(self::newMatch('Mexico', 'Canada'), 1, 0);
     }
 
     public function testScoreOfFinishedMatchCannotBeUpdated(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
         $match = self::newMatch('Mexico', 'Canada');
-        $board->startGame($match);
-        $board->finishGame($match);
+        $this->board->startGame($match);
+        $this->board->finishGame($match);
 
         $this->expectException(FootballMatchNotFoundException::class);
 
-        $board->updateScore($match, 1, 0);
+        $this->board->updateScore($match, 1, 0);
     }
 
     public function testSummaryIsOrderedByTotalScoreThenMostRecentlyStarted(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
-        self::playExample($board);
+        self::playExample($this->board);
 
-        self::assertSame(self::EXAMPLE_SUMMARY, self::describe($board->summary()));
+        self::assertSame(self::EXAMPLE_SUMMARY, self::describe($this->board->summary()));
     }
 
     public function testFinishedGamesUseSameOrderRegardlessOfFinishOrder(): void
     {
-        $board = new ScoreBoard(new InMemoryFootballMatchRepository());
-        $matches = self::playExample($board);
+        $matches = self::playExample($this->board);
 
         foreach ([2, 0, 4, 1, 3] as $index) {
-            $board->finishGame($matches[$index]);
+            $this->board->finishGame($matches[$index]);
         }
 
-        self::assertSame([], $board->summary());
-        self::assertSame(self::EXAMPLE_SUMMARY, self::describe($board->finishedGames()));
+        self::assertSame([], $this->board->summary());
+        self::assertSame(self::EXAMPLE_SUMMARY, self::describe($this->board->finishedGames()));
     }
 
     /**
